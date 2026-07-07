@@ -1,5 +1,18 @@
 # Skills Demonstrated:
-##
+## Classic algorithm implementation from scratch
+Implemented the Smith-Waterman local sequence alignment algorithm (dynamic programming with a traceback step), a foundational technique in computational biology/bioinformatics, without relying on an existing library.
+## Custom data structures
+Designed and built a quad-tree from scratch to support efficient 2D spatial nearest-neighbor queries, rather than a brute-force distance scan.
+## Applied machine learning fundamentals
+Performed feature standardization, PCA-based dimensionality reduction, an appropriate train/test split, and a from-scratch k-nearest-neighbors classifier (rather than calling sklearn's KNN).
+## Model evaluation and interpretation
+Built and read confusion matrices to evaluate classifier performance at different values of k, and reasoned about what the results imply about class separability.
+## Parallel/high-performance computing
+Parallelized a compute-heavy fractal-generation algorithm with MPI (mpi4py), including manual work partitioning across processes, collective communication (Allgather), and benchmarking to quantify real speedup.
+## Scientific computing tooling
+Used NumPy for numerical computation and Matplotlib for visualization (scatterplots and image rendering).
+## Validation
+Designed multiple test cases with varied parameters to check correctness of custom implementations, and cross-validated outputs (e.g., confirming the parallel Mandelbrot output matches the serial version) before trusting performance results.
 
 # Exercise 1
 ## Instructions
