@@ -1,8 +1,8 @@
-# Description
+# Description:
 This assignment was for Yale University's Biomedical Data Science, Mining and Modeling course. This assignment covers protein
 structural geometry, deep generative modeling for medical imaging, and single-cell RNA-seq analysis, highlighting the ability to work with classical structural bioinformatics, deep learning, and single-cell genomics analysis.
 
-# Skills Demonstrated
+# Skills Demonstrated:
 ## Protein Backbone & Side-Chain Geometry
 - Implementing dihedral (torsion) angle calculation.
 - Applying this to compute backbone dihedrals (φ, ψ) and side-chain dihedrals (χ1) for threonine residues.
