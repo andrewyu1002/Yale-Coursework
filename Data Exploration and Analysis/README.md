@@ -37,3 +37,14 @@ Categorical data aggregation: Building custom mapping logic and iterative loops 
 Programmatic workflow design: Writing loops to apply repeated transformations across a vector of search terms rather than hardcoding each case individually.
 Statistical simulation: Generating random samples from binomial distributions (rbinom()) and assessing normal approximation conditions (np > 10, n(1−p) > 10).
 Data visualization: Creating normal quantile plots (qqPlot()) and customized horizontal bar charts (barplot()) with formatted labels, margins, colors, and titles.
+
+# Homework 4
+## Description:
+This project is an R Markdown analysis exploring core inferential statistics concepts through hands-on programming and simulation. It combines custom iterative algorithms, Monte Carlo simulation of sampling distributions, and bootstrap resampling methods to analyze real-world environmental and economic datasets. The work demonstrates the ability to translate statistical theory into working code, validate theoretical results against simulated data, and communicate findings clearly through visualizations and written interpretation.
+
+## Skills Demonstrated:
+Programming & Data Wrangling: Writing custom for loops to generate sequences (Tribonacci numbers) and compute column-wise summary statistics across a dataframe. Reading and cleaning external CSV data directly from URLs. Vectorized computation using apply()/tapply() for row- and group-wise summary statistics.
+Statistical Simulation: Simulating sampling distributions via repeated random sampling from theoretical distributions. Empirically validating the Central Limit Theorem by comparing simulated standard errors to theoretical predictions. Comparing the behavior of sample means, medians, and variances under repeated sampling.
+Bootstrap Resampling & Inference: Constructing bootstrap resampling procedures from scratch to estimate confidence intervals for differences in means. Comparing bootstrap confidence intervals to parametric (t-test based) confidence intervals. Applying log transformations to address skewed data and improve normality assumptions.
+Hypothesis Testing: Conducting and interpreting two-sample t-tests at custom significance levels. Assessing statistical significance using both p-values and confidence intervals. Evaluating distributional assumptions using normal quantile plots.
+Data Visualization: Building histograms, boxplots, and overlaid density plots with custom colors, line types, and legends in base R. Designing multi-distribution comparison plots to visualize how parameters affect distribution shape.
