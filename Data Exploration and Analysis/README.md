@@ -48,3 +48,28 @@ Statistical Simulation: Simulating sampling distributions via repeated random sa
 Bootstrap Resampling & Inference: Constructing bootstrap resampling procedures from scratch to estimate confidence intervals for differences in means. Comparing bootstrap confidence intervals to parametric (t-test based) confidence intervals. Applying log transformations to address skewed data and improve normality assumptions.
 Hypothesis Testing: Conducting and interpreting two-sample t-tests at custom significance levels. Assessing statistical significance using both p-values and confidence intervals. Evaluating distributional assumptions using normal quantile plots.
 Data Visualization: Building histograms, boxplots, and overlaid density plots with custom colors, line types, and legends in base R. Designing multi-distribution comparison plots to visualize how parameters affect distribution shape.
+
+# Homework 5
+## Description:
+An R-based data analysis project examining two independent datasets: runner performance from the New Haven Road Race 5K across the 2017 and 2018 race years, and global measles vaccination rates from 2016 to 2024 in relation to national income levels. The project builds a reusable data-cleaning function to standardize raw race-timing data, merges cross-year records to identify repeat participants and measure individual performance changes, and applies bootstrap resampling and permutation testing to evaluate whether vaccination rate changes differ significantly between high- and low-income countries. 
+
+## Skills Demonstrated:
+Custom Function Development (R): Wrote a reusable cleanNHData() function to standardize and clean raw datasets, including handling missing values, deriving new variables from existing fields, and converting inconsistently formatted time strings using conditional logic.
+Data Wrangling & Cleaning: Deduplicated records, filtered missing/invalid observations, and reshaped raw CSV data into analysis-ready formats using base R (subset, logical indexing, substr()).
+Data Merging & Integration: Combined multiple datasets across years using merge(), intersect(), and %in% to construct matched longitudinal records for repeat observations.
+Exploratory Data Analysis: Produced summary statistics, histograms, and side-by-side boxplots to visualize distributions and compare subgroups.
+Statistical Inference: Constructed bootstrap confidence intervals and conducted permutation (randomization) hypothesis tests to assess differences in medians/means between groups without relying on parametric assumptions.
+Hypothesis Testing & Interpretation: Framed null and alternative hypotheses, selected appropriate significance thresholds, and drew data-supported conclusions from simulation-based test results.
+Data Visualization: Created labeled histograms and boxplots with reference lines using R base graphics to communicate statistical findings clearly.
+
+# Homework 6
+## Description
+This project applies correlation analysis techniques in R to three real-world datasets: road race finishing times, World Bank CO2 emissions/energy use data, and a class survey dataset. The analysis includes custom statistical functions for permutation testing, bootstrap resampling for confidence intervals, and data cleaning of messy real-world variables.
+
+## Skills Demonstrated
+Statistical Inference: Permutation testing and bootstrap resampling to construct confidence intervals and evaluate significance of correlation coefficients.
+Data Cleaning & Wrangling: Handling inconsistent/messy data (out-of-range values, mixed text/numeric fields, missing data) using base R and regular expressions.
+Exploratory Data Analysis: Identifying and interpreting outliers, assessing distribution shape and skewness, and evaluating the appropriateness of statistical measures given data characteristics.
+Data Visualization: Custom scatterplots, histograms, jittered plots, and frequency-scaled bubble plots using base R graphics; correlation matrix visualization with corrplot and PerformanceAnalytics.
+Custom Function Development: Writing reusable R functions (myCor(), permCor(), cleanIt()) to standardize analysis workflows.
+Log Transformation: Applying and interpreting log transformations to normalize skewed distributions and improve correlation analysis.
