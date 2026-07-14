@@ -73,3 +73,17 @@ Exploratory Data Analysis: Identifying and interpreting outliers, assessing dist
 Data Visualization: Custom scatterplots, histograms, jittered plots, and frequency-scaled bubble plots using base R graphics; correlation matrix visualization with corrplot and PerformanceAnalytics.
 Custom Function Development: Writing reusable R functions (myCor(), permCor(), cleanIt()) to standardize analysis workflows.
 Log Transformation: Applying and interpreting log transformations to normalize skewed distributions and improve correlation analysis.
+
+# Homework 7
+## Description:
+This project explores multiple linear regression through two applied case studies. The first uses a simulation study to demonstrate how R-squared inevitably increases as predictors are added to a model, illustrating the danger of model overfitting when the number of predictors approaches the number of observations. The second is a full applied regression workflow on real-world survey data from a Justice Department–sponsored study of Ohio residents' attitudes toward crime and punishment. This portion covers correlation analysis, best subsets variable selection across four selection criteria (R-squared, adjusted R-squared, BIC, and Mallows' Cp), missing data handling, residual diagnostics, and interpretation of a final regression model in a policy-relevant context.
+
+## Skills Demonstrated:
+Statistical Simulation: Generated synthetic data to empirically demonstrate the relationship between the number of predictors, sample size, and R-squared inflation.
+Multiple Linear Regression: Built and interpreted linear models with lm(), including iterative model construction via for-loops.
+Model/Variable Selection: Applied best subsets regression and compared model selection under R-squared, adjusted R-squared, BIC, and Cp criteria.
+Exploratory Data Analysis & Correlation Analysis: Computed and visualized pairwise correlation matrices (corrplot.mixed) with significance testing (cor.mtest).
+Data Visualization: Produced labeled scatterplots, jittered plots for ordinal/discrete data, and coefficient/confidence-interval plots.
+Regression Diagnostics: Assessed model assumptions (linearity, homoscedasticity, normality) using studentized residual plots and normal quantile plots.
+Handling Missing Data: Evaluated the impact of missing values on model fit across candidate models.
+Data Wrangling: Imported, subset, and reshaped real-world survey data (CSV import, column indexing, subsetting) in R.
