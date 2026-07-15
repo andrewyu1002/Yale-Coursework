@@ -1,0 +1,338 @@
+---
+title: "Homework 08 One Way ANOVA SOLUTIONS"
+output:
+  html_document: default
+  pdf_document: default
+  word_document: default
+subtitle: Due by 11:59pm, Friday, November 14, 2025
+author: S&DS 2300/5300/ENV 757
+---
+
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+```
+
+The CSV file `HindiFilm.csv` which you can get [HERE](https://raw.githubusercontent.com/jreuning/sds230_data/refs/heads/main/HindiFilm.csv) contains the 1698 Hindi language movies that released in India across a 13 year period (2005-2017)  (thanks to Premkumar, Prashant (2020), “Bollywood Movies data”, Mendeley Data, V1, doi: 10.17632/3c57btcxy9.1).  Here are the variables:
+
+* Name
+* Period (normal or holiday)
+* Remake (Yes/No)
+* Franchise (Yes/No)
+* Genre
+* New_Actor (Yes/No)
+* New_Director (Yes/No)
+* New_Musician (Yes/No - i.e. new music director)
+* Lead (Lead actor name)
+* Director (Name)
+* Musician (Music Director name)
+* Screens (how many screens was it shown on)
+* Revenue (Indian Rupees)
+* Budget (Indian Rupees - usual shorthand is INR)
+
+
+
+**1)  One Way ANOVA of percent return for movies.** *(75 pts - 6 pts each except part 1.12 which is 9 pts)*
+
+1.1)  Read the data into an object called `movie` (do NOT use the option `as.is = TRUE`).   Update this object so that is only contains the columns `Budget`, `Revenue`, `Genre`, and `Name`.  In addition, retain only rows that have complete data for these four columns.
+
+Next, create a new column called `pctReturn` that calculates the percentage return (have this be a percentage, NOT a fraction).
+
+Make a table of `Genre` and sort this from high to low.  Show these results.
+
+Update `movie` so that it only contains movies in the following genres : "masala", "drama", "fantasy", "love_story", "action".
+
+As per usual, look at the first few rows of the data, get the dimension of the final dataset.
+
+```{r}
+movie <- read.csv("https://raw.githubusercontent.com/jreuning/sds230_data/refs/heads/main/HindiFilm.csv")
+movie <- movie[, c("Budget", "Revenue", "Genre", "Name")]
+movie <- movie[complete.cases(movie), ]
+
+movie$pctReturn <- movie$Revenue / movie$Budget * 100
+
+sort(table(movie$Genre), decreasing = TRUE)
+
+keep_genres <- c("masala", "drama", "fantasy", "love_story", "action")
+movie <- subset(movie, Genre %in% keep_genres)
+
+head(movie)
+dim(movie)
+```
+
+1.2)  Make a boxplot of `pctReturn` by `Genre`.   Superimpose a red dot at the mean percent return for each Genre; also print this mean rounded to the nearest percent. In addition, add a horizontal dotted blue line at 100 (this represents the place where revenue = budget).  Discuss what you observe.
+
+```{r}
+boxplot(pctReturn ~ Genre, 
+        data = movie,
+        main = "Percent Return by Genre",
+        ylab = "Percent Return",
+        xlab = "Genre")
+
+genre_means <- tapply(movie$pctReturn, movie$Genre, mean)
+round(genre_means, 0)
+points(x = 1:length(genre_means),
+       y = genre_means,
+       col = "red",
+       pch = 19)
+
+abline(h = 100, col = "blue", lty = 2)
+```
+
+
+*For each genre's mean percent return, it falls within a range of 54 and 3601. However, the data is not portrayed well in the boxplot, as the extreme outliers (going up to around 150000) make it so that the plots are too squished to distinguish sufficiently.*
+
+1.3)  Make a new variable on 'movie' called `log10pct` that is log base 10 of percent return (the function you want is `log10()`).  Repeat part 1.2, but modify the horizontal line so that it is at the correct value (when rounding mean log10(pct return), round to 1 decimal place).  Discuss what you observe.
+
+```{r}
+movie$log10pct <- log10(movie$pctReturn)
+genre_means_log <- tapply(movie$log10pct, movie$Genre, mean)
+round(genre_means_log, 1)
+
+boxplot(log10pct ~ Genre, 
+        data = movie,
+        main = "log10(Percent Return) by Genre",
+        ylab = "log10(Percent Return)",
+        xlab = "Genre")
+
+points(x = 1:length(genre_means_log),
+       y = genre_means_log,
+       col = "red",
+       pch = 19)
+
+abline(h = log10(100), col = "blue", lty = 2)
+```
+
+*Here, the boxplot is not squished. Generally, we see that the mean and median for most genres at least break even. The only genre whose mean and median is below 100% pctReturn is masala.*
+
+1.4)  Make a `stripplot` of log10pct by Genre.   Which plot do you find more instructive - the boxplot or the strip plot (no right answer here, but give a one sentence reason for your opinion)?
+
+```{r}
+library(lattice)
+stripplot(log10pct ~ Genre, 
+          data = movie,
+          jitter = 0.1,
+          main = "log10(Percent Return) by Genre",
+          ylab = "log10(Percent Return)",
+          xlab = "Genre")
+```
+
+*I think the boxplot is more instructive because while the stripplot better displays the count, the boxplot better displays measurements such as median, IQR, outliers, etc.*
+
+1.5)  Just using the visual information provided by the boxplot of log10pct, do you think that the distribution of observations inside each Genre is approximately normal?   Do you think the standard deviation is approximately the same in each Genre?  (Remember that ANOVA assumes we have a normal distribution inside each Genre and that the standard deviation is the same across groups.)
+
+*Based on the boxplot, I think that the distribution of observations inside each genre is normal mostly based on where the IQR is. However, I do not think the standard deviation is approximately hte same in each genre because masala is a lot more squished than other genres.*
+
+1.6)  Calculate the sample standard deviation of log10pct for each Genre   Calculate the ratio of largest to smallest sample standard deviation.   Is it reasonable to assume that the variances are the same across Genres?
+
+```{r}
+sd_by_genre <- tapply(movie$log10pct, movie$Genre, sd)
+sd_by_genre
+
+sd_ratio <- max(sd_by_genre) / min(sd_by_genre)
+sd_ratio
+```
+
+
+*It is unreasonable to assume that the variances are the same across genres, since the largest log10pct standard deviation is 3.19 times as large as the smallest, which is slightly above the typical threshold of 2.*
+
+1.7)  Use the `aov()` function to compare mean log10pct between Genres.  Save your results to an object called `aov1`.  Get summary information for `aov1`.  Is the mean log10pct return statistically significantly different between Genres?  In addition, confirm that the degrees of freedom reported by the test are what you expect (and write a sentence about this).
+
+```{r}
+aov1 <- aov(log10pct ~ Genre, data = movie)
+summary(aov1)
+```
+
+
+*The mean log10pct is statistically significantly different between genres because the Pr(>F) if 3.79e-13, much less than the standard 0.05 threshold. For genre and residuals, df = 4 and df = 923, respectively. This makes sense because we have 5 genres (5 - 1 = 4) and 928 residuals (928 - 5 = 923).*
+
+1.8)  Fit log10pct return based on Genre as a regression model WITHOUT an intercept.  Save the results to an object called `mod1`.  Following the example code provided in class, calculated confidence intervals for the mean percent return for each Genre and report results to two decimal places.  Then make a plot of the resulting confidence intervals using the `plotCI()` function in the `plotrix` library.
+
+You'll notice that some intervals overlap while others do not.   What should you conclude from this?
+
+```{r}
+mod1 <- lm(log10pct ~ Genre - 1, data = movie)
+CIs <- confint(mod1)
+round(CIs, 2)
+coefs <- coef(mod1)
+
+library(plotrix)
+par(mar=c(5,8,4,2))
+plotCI(coefs, 1:(length(coefs)), ui = CIs[,2], li = CIs[,1], axes = FALSE, err = "x", ylab = "", 
+       xlab = "Mean and CI's for log10pct by Genre", lwd = 2, col = "blue")
+axis(side = 1)
+axis(side = 2, at = 1:length(coefs), label = sub("Genre", "", names(coefs)), las = 2)
+```
+
+
+*Nothing should be concluded based on which intervals overlap and which do not.*
+
+1.9)  Use the `pairwise.t.test()` function to calculate Holm's correction for comparing pairs of means.  Which pairs of Genres have statistically significantly different percent returns (use alpha = 0.05)?
+
+```{r}
+pairwise.t.test(movie$log10pct, movie$Genre)
+```
+
+
+*Drama + action, fantasy + action love_story + action, masala + action, masala + drama, masala + fantasy, and masala + love_story all have statistically signifcantly different percent returns.*
+
+
+1.10)  Calculate Tukey simultaneous 95% confidence intervals for differences in mean percent return using the `TukeyHSD()` function.  Plot the resulting confidence intervals.  Do you reach the same conclusions as when using the Holm correction?
+
+```{r}
+par(mar = c(5,11,4,1))
+plot(TukeyHSD(aov1), las = 1)
+```
+
+
+*We get the same conclusions as when using the Holm correctionFantasy+drama, love_story+drama, and love_story+fantasy all have CIs that overlap with 0, meaning that they are not statistically significantly different, matching the results of the Holm correction.*
+
+
+1.11)  Create residual plots appropriate for `aov1`.  Does it appear that the residuals have an approximately normal distribution?  Is this good or bad?  Comment in a sentence or two about the plot of fits versus residuals.
+
+```{r}
+library(car)
+myResPlots <- function(model, label){
+  #plot of fitted vs. studentized residuals
+  plot(rstudent(model) ~ model$fitted.values, pch = 19, col = 'red', 
+       xlab = "Fitted Values", ylab = "Studentized Residuals", 
+       main = paste("Fits vs. Studentized Residuals,", label))
+  abline(h = 0, lwd = 3)
+  abline(h = c(2,-2), lty = 2, lwd = 2, col="blue")
+  abline(h = c(3,-3), lty = 2, lwd = 2, col="green")
+  
+  #Normal quantile plot of studentized residuals
+  qqp(rstudent(model), pch = 19, main = paste("NQ Plot of Studentized Residuals,", label))
+  
+  #Plot of Cooks Distances
+  plot(model, which = 4, lwd = 3, col = 'red')
+  abline(h = 6/length(model$residuals), col = 'black', lwd = 3, lty = 2)
+}
+
+myResPlots(aov1, label = "log10pct")
+```
+
+
+*I'd say that the residuals are somewhat close to a normal distribution (which is good), with the main concerns being the left tail end going outside of the expected range (makes it not as good). As for fits vs residuals, we can see that the variance is not constant as there's a funnel shape.*
+
+
+1.12)  Just to see what would have happened if we didn't use a log10 transformation, repeat parts 1.7 through 1.11 on the original percent return data (i.e. not log10).  Just use one block of code (literally, just copy your code, replace `log10pct` with `pctReturn`). 
+
+Write about three sentences commenting on the fit of this model vs. the fit of the previous model.  Specifically, comment on whether any pairs of groups changed significance, the overall model significance, and the residual plots.
+
+```{r}
+aov2 <- aov(pctReturn ~ Genre, data = movie)
+summary(aov2)
+
+mod2 <- lm(pctReturn ~ Genre - 1, data = movie)
+CIs <- confint(mod2)
+round(CIs, 2)
+coefs <- coef(mod2)
+
+library(plotrix)
+par(mar=c(5,8,4,2))
+plotCI(coefs, 1:(length(coefs)), ui = CIs[,2], li = CIs[,1], axes = FALSE, err = "x", ylab = "", 
+       xlab = "Mean and CI's for pctReturn by Genre", lwd = 2, col = "blue")
+axis(side = 1)
+axis(side = 2, at = 1:length(coefs), label = sub("Genre", "", names(coefs)), las = 2)
+
+pairwise.t.test(movie$pctReturn, movie$Genre)
+
+par(mar = c(5,11,4,1))
+plot(TukeyHSD(aov2), las = 1)
+
+library(car)
+myResPlots <- function(model, label){
+  #plot of fitted vs. studentized residuals
+  plot(rstudent(model) ~ model$fitted.values, pch = 19, col = 'red', 
+       xlab = "Fitted Values", ylab = "Studentized Residuals", 
+       main = paste("Fits vs. Studentized Residuals,", label))
+  abline(h = 0, lwd = 3)
+  abline(h = c(2,-2), lty = 2, lwd = 2, col="blue")
+  abline(h = c(3,-3), lty = 2, lwd = 2, col="green")
+  
+  #Normal quantile plot of studentized residuals
+  qqp(rstudent(model), pch = 19, main = paste("NQ Plot of Studentized Residuals,", label))
+  
+  #Plot of Cooks Distances
+  plot(model, which = 4, lwd = 3, col = 'red')
+  abline(h = 6/length(model$residuals), col = 'black', lwd = 3, lty = 2)
+}
+
+myResPlots(aov2, label = "pctReturn")
+```
+
+
+*The non-log transformed model fits quite poorly. When looking at the p values between groups, none of them reached below the 0.05 significance threshold, and genre had a Pr(>F) = 0.204, much larger than what it was when we fit log10pct. Additionally, both fits vs residuals and qq plot showed assumption violations (heteroscedasticity and not normal).*
+
+
+**2)  Non-parametric tests.** *(25 pts - 5pts each)*
+
+
+2.1)  Perform a Bartlett test to see whether variances of percent return are the same across Genres.  Then, repeat for `log10pct`.  Write one sentence about what you conclude.
+
+```{r}
+bartlett.test(movie$pctReturn, movie$Genre)
+bartlett.test(movie$log10pct, movie$Genre)
+```
+
+
+*Both Bartlett tests have a p_value < 0.05, meaning that variances are significantly different (though doing a log transformation helped reduce this difference).*
+
+
+2.2)  Perform a Levene test to see whether variances of percent return are the same across Genres.  Then, repeat for `transpct`.  Write one sentence about what you observe (be sure to review the characteristics of Levene's test).
+
+```{r}
+leveneTest(movie$pctReturn, movie$Genre)
+leveneTest(movie$log10pct, movie$Genre)
+```
+
+
+*The Levene Test shows that variance IS NOT significantly different when using pctReturn, but IS significantly different when using log10pct, and this result is due to the fact that the Levene test does not assume the observations are from normal distributions, a condition that was assumed for Bartlett tests.*
+
+2.3)  Perform Welch's ANOVA on the original data which you will recall assumes unequal variances but which assumes normal distributions in each group  (i.e. compare `pctReturn` by `Genre`).  Compare results to regular one-way ANOVA.  Is Welch's ANOVA a good choice here?  
+
+```{r}
+oneway.test(pctReturn ~ Genre, data = movie)
+summary.aov(aov(pctReturn ~ Genre, data = movie))
+```
+
+
+*Welch's ANOVA detects significant differences in mean pctReturn between genres (p-value = 9.859e-12) while regular one-way ANOVA does not (Pr(>F) = 0.204). However, we know that the distribution of our data on the raw scale is not normally distributed in each group which is an assumption of Welch's ANOVA. Thus, regardless of the results, neither regular ANOVA or Welch's ANOVA is a good choice on the raw scale.*
+
+
+2.4)  Perform a non-parametric Kruskal Wallis test which recall makes NO assumptions about equal variances or about normality.  Compare results to regular one-way ANOVA.  Is Kruskal Wallis a good choice here?  
+
+```{r}
+kruskal.test(pctReturn ~ Genre, data = movie)
+summary.aov(aov(pctReturn ~ Genre, data = movie))
+```
+
+
+*Kruskal Wallis Test detects significant differences in mean pctReturn between genres (p-value = 9.859e-12) while regular one-way ANOVA does not (Pr(>F) = 0.204). Kruskal Wallis is a good choice here because pctReturn does not follow normality nor equal variances, assumptions used in regular one-way ANOVA but not in Kruskal Wallis.*
+
+2.5)  Repeat 2.3) and 2.4) on the log10 scale.  Discuss your results and compare results to regular ANOVA.
+
+```{r}
+oneway.test(log10pct ~ Genre, data = movie)
+kruskal.test(log10pct ~ Genre, data = movie)
+summary.aov(aov(log10pct ~ Genre, data = movie))
+```
+
+
+*All three tests are significant, with p values going from lowest to highest being Welch's ANOVA < one-way ANOVA < Kruskal-Wallis. This makes sense since the log10pct data was close to normal but did not have equal variances, matching most closely to Welch's ANOVA.*
+
+3)  Pseudocode
+You are working with a dataset of average daily tourism spending for five different types of visitor experiences in Connecticut: coastal, city/cultural, outdoor recreation, culinary, and family-oriented. Each observation represents a week’s worth of spending data collected over the past three years. The dataset also includes information on total visitors, number of local events, and whether the data week included a holiday period. Your task is to determine whether average spending per visitor differs among experience types and to check whether assumptions of equal variances and normality of residuals are met.
+
+- *Read in dataset*
+- *Remove any rows with empty cells*
+- *View the first few rows and get dim of dataset*
+- *Make boxplots of average daily tourism (adt) according to visitor experience (ve)*
+- *Make boxplots of log10(adt) according to visitor experience (ve)*
+- *use aov() to compare mean of adt between ve and log10(adt) between ve and save to objects*
+- *Do fits vs residuals and a qq plot to check for normality and equal variance in both aov objects*
+- *Based on the plots, choose an appropriate model to fit (one-way ANOVA, Welch's ANOVA, or Kruskal-Wallis)*
+- *Fit the selected model to determine whether average spending per visitor differs among experience types.*
+

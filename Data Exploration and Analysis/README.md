@@ -87,3 +87,22 @@ Data Visualization: Produced labeled scatterplots, jittered plots for ordinal/di
 Regression Diagnostics: Assessed model assumptions (linearity, homoscedasticity, normality) using studentized residual plots and normal quantile plots.
 Handling Missing Data: Evaluated the impact of missing values on model fit across candidate models.
 Data Wrangling: Imported, subset, and reshaped real-world survey data (CSV import, column indexing, subsetting) in R.
+
+# Homework 8
+## Description:
+This project analyzes a dataset of 1,698 Hindi-language films released in India between 2005 and 2017 to determine whether a film's percentage return on investment (Revenue / Budget) differs significantly across genre. Using R, the analysis cleans and filters the raw dataset, engineers a percent-return metric, and evaluates it (both on its original scale and a log10-transformed scale) using one-way ANOVA. The workflow includes diagnostic checks of ANOVA assumptions (normality, equal variances), post-hoc pairwise comparisons (Holm correction and Tukey HSD), and a comparison against non-parametric and variance-robust alternatives (Bartlett's test, Levene's test, Welch's ANOVA, and the Kruskal-Wallis test) to identify the most statistically appropriate model given the data's characteristics.
+
+## Skills Demonstrated:
+Data Wrangling in R: Importing data from a remote CSV, subsetting columns, filtering incomplete cases, and engineering new variables (e.g., percent return, log-transformed variables).
+Exploratory Data Analysis: Summarizing categorical variables, generating boxplots and strip plots, and visually assessing distributional assumptions.
+Statistical Modeling: Fitting and interpreting one-way ANOVA models with and without intercepts.
+Hypothesis Testing: Applying and interpreting Bartlett's test, Levene's test, Welch's ANOVA, and the Kruskal-Wallis test to assess variance homogeneity and select appropriate statistical methods.
+Post-Hoc Analysis: Conducting pairwise comparisons using Holm-corrected t-tests and Tukey's HSD, and visualizing simultaneous confidence intervals.
+Model Diagnostics: Evaluating residual plots, Q-Q plots, and Cook's distance to assess normality, homoscedasticity, and influential observations.
+Data Visualization: Producing publication-style plots in base R and the lattice and plotrix packages.
+
+# Homework 9
+## Description:
+
+
+## Skills Demonstrated:
