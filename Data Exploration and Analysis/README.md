@@ -103,6 +103,13 @@ Data Visualization: Producing publication-style plots in base R and the lattice 
 
 # Homework 9
 ## Description:
-
+This project analyzes data from the 2020 International Social Survey Programme (ISSP) on Environment, a cross-national survey covering over 21,000 respondents across 14 countries. Using a subset of seven countries, I built a composite environmental attitude index from 12 individual survey items, then used statistical modeling to examine how demographic factors relate to environmental attitudes. The analysis progresses from data cleaning and exploratory visualization through two-way ANOVA, ANCOVA, and a general linear model refined via backward stepwise selection, with model assumptions validated through residual diagnostics at each stage.
 
 ## Skills Demonstrated:
+Data wrangling & cleaning: Filtering and merging survey data using ISO country codes, recoding numeric codes into meaningful categorical labels, and identifying/handling invalid or out-of-range values.
+Composite index construction: Reverse-scoring and aggregating multiple Likert-scale survey items into a single validated measure, with distributional checks (histograms, Q-Q plots).
+Exploratory data analysis: Boxplots, scatterplots, and interaction plots to visually assess relationships and interactions between categorical and continuous predictors.
+Statistical modeling in R: Two-way ANOVA, ANCOVA, and multiple linear regression (GLM) with interaction terms, using Type III sums of squares.
+Model selection: Manual backward stepwise regression, systematically removing non-significant interactions and terms.
+Model diagnostics: Residual analysis (studentized residuals, normal Q-Q plots) to assess normality, homoscedasticity, and model fit.
+Statistical interpretation & communication: Translating regression coefficients and interaction effects into clear, non-technical written conclusions.
