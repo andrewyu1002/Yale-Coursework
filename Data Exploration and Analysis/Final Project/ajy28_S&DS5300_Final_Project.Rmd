@@ -1,0 +1,357 @@
+---
+title: "ajy28_S&DS5300_Final_Project"
+output: html_document
+---
+
+## Introduction
+In this project, I will be analyzing the Food dataset provided by the course. The main objective of this analysis is to identify variable relationships with the weight. Specifically, I would like to look at variables relating to lifestyle, demographics, and calorie perception. Lifestyle and demographic variables are included because they are known to have significant impact on weight. Meanwhile, calorie/nutrient perception is an interesting category to look at, because the existence of a relationship between calorie/nutrient knowledge and weight may place further emphasis on food education.
+
+## Data
+The following are the variables I ended up using, detailing both the prompt and response options when appropriate.
+
+- "weight": weight in lbs
+- "Gender": 1 = Female, 2 = Male
+- "GPA": Numerical, actual GPA
+- "grade_level": 
+    - 1 = freshman, 
+    - 2 = sophomore, 
+    - 3 = junior, 
+    - 4 = senior
+- "healthy_feeling": How likely to agree with "I feel very healthy!"? 
+    - Scale of 1-10 where 1 is strongly agree and 10 is strongly disagree.
+- "self_perception_weight": Self perception of weight
+    - 1 = slim, 
+    - 2 = very fit, 
+    - 3 = just right, 
+    - 4 = slightly overweight, 
+    - 5 = overweight, 
+    - 6 = i dont think myself in these terms
+- "exercise": How often do you exercise in a regular week?
+    - 1 = Everyday
+    - 2 = Twice or three times per week
+    - 3 = Once a week
+    - 4 = Sometimes
+    - 5 = Never
+- "calories_day": Importance of consuming calories per day
+    - 1 = i dont know how many calories i should consume
+    - 2 = it is not at all important
+    - 3 = it is moderately important
+    - 4 = it is very important
+- "nutritional_check": Checking nutritional values frequency
+    - 1 = never
+    - 2 = on certain products only
+    - 3 = very rarely
+    - 4 = on most products
+    - 5 = on everything
+- "calories_chicken": Guessing calories in chicken piadina
+    - 265
+    - 430
+    - 610
+    - 720
+- "waffle_calories": Guessing calories in waffle potato sandwich
+    - 575
+    - 760
+    - 900
+    - 1315
+
+## Data Cleaning Process
+```{r, include = FALSE}
+food <- read.csv("Food.csv")
+dim(food)
+colnames(food)
+```
+
+Because we know what variables we are keeping, we first read in the csv and subset to only include the relevant columns. Dimensions and column names are checked to see how much data is retained and to ensure variables are kept.
+```{r, echo = FALSE}
+cols_to_keep <- c("weight", "Gender", "GPA","grade_level", "healthy_feeling", "self_perception_weight", "exercise", "calories_day", "nutritional_check", "calories_chicken", "waffle_calories")
+
+food_subset <- food[, cols_to_keep]
+dim(food_subset)
+colnames(food_subset)
+```
+
+Afterwards, we check to see if there are any variables that have missing values, which, based on the output below, there seem to be a few in self_perception_weight, exercise, and calories_day.
+```{r, echo = FALSE}
+colSums(is.na(food_subset))
+```
+
+Because of these missing values, I went ahead and omitted any rows that had any missing values to ensure that we were working with full responses. The dimensions of the dataset were then checked and the output shown below.
+```{r, echo = FALSE}
+food_subset_no_NA <- na.omit(food_subset)
+dim(food_subset_no_NA)
+```
+
+For additional quality control, I had checked GPA since that question seemed to be free response. I was looking for numerical values, and most of them were, but a couple had character text in them. To address this, I removed any non-numeric character, trimmed the whitespace, and converted the value to numeric. Additionally, any values at this point that did not have a number or were below 0 / above 4 were removed. The responses for GPA before and after cleaning are listed in the output below.
+```{r, echo = FALSE}
+# Checking for outliers/mistypes/other potential errors
+# Removed any GPAs not in a valid range or not numeric and put them in GPA_clean
+food_subset_no_NA$GPA
+food_subset_no_NA$GPA_clean <- gsub("[^0-9\\.\\-]", "", food_subset_no_NA$GPA)
+food_subset_no_NA$GPA_clean <- trimws(food_subset_no_NA$GPA_clean)
+food_subset_no_NA$GPA_clean <- as.numeric(food_subset_no_NA$GPA_clean)
+
+for (i in 1:nrow(food_subset_no_NA)) {
+  gpa_val <- food_subset_no_NA$GPA_clean[i]
+  if (is.na(gpa_val) | gpa_val < 0 | gpa_val > 4) {
+    food_subset_no_NA$GPA_clean[i] <- NA
+  }
+}
+food_subset_no_NA <- na.omit(food_subset_no_NA)
+food_subset_no_NA$GPA_clean
+```
+
+Seeing as weight was also a free response question, the same QC process as GPA was applied. The responses for weight before and after cleaning are listed in the output below.
+```{r, echo = FALSE}
+# Did the same thing with weight
+food_subset_no_NA$weight
+food_subset_no_NA$weight_clean <- gsub("[^0-9\\.\\-]", "", food_subset_no_NA$weight)
+food_subset_no_NA$weight_clean <- trimws(food_subset_no_NA$weight_clean)
+food_subset_no_NA$weight_clean <- as.numeric(food_subset_no_NA$weight_clean)
+for (i in 1:nrow(food_subset_no_NA)) {
+  weight_val <- food_subset_no_NA$weight_clean[i]
+  if (is.na(weight_val)) {
+    food_subset_no_NA$weight_clean[i] <- NA
+  }
+}
+food_subset_no_NA <- na.omit(food_subset_no_NA)
+food_subset_no_NA$weight_clean
+```
+
+All other variables in our subsetted dataset were multiple choice questions. Because we had already accounted for NA values earlier, no additional QC was needed.
+```{r, include = FALSE}
+#"Gender","grade_level", "healthy_feeling", "self_perception_weight", "exercise", "calories_day", "nutritional_check", "calories_chicken", "waffle_calories"
+print("Gender")
+unique(food_subset_no_NA$Gender) # Good
+print("grade_level")
+unique(food_subset_no_NA$grade_level) # Good
+print("healthy_feeling")
+unique(food_subset_no_NA$healthy_feeling) # Good
+print("self_perception_weight")
+unique(food_subset_no_NA$self_perception_weight) # Good
+print("calories_chicken")
+unique(food_subset_no_NA$calories_chicken) # Good
+print("calories_day")
+unique(food_subset_no_NA$calories_day) # Only has 2-4, but 1 is basicallly idk, so it should be fine that no one responded with 1
+print("exercise")
+unique(food_subset_no_NA$exercise) # Only 1-3. this is fine, but I doubt they're all tellling the truth
+print("nutritional_check")
+unique(food_subset_no_NA$nutritional_check) # Good
+print("waffle_calories")
+unique(food_subset_no_NA$waffle_calories) # Good
+```
+
+## Descriptive Plots, Summary Information
+To visualize the continuous variables, boxplots were made for GPA and weight.
+
+```{r, echo = FALSE, fig.width = 4, fig.height = 3}
+boxplot(food_subset_no_NA$GPA_clean, xlab = "GPA_clean", ylab = "4.0 Scale GPA", main = "GPA Distribution")
+boxplot(food_subset_no_NA$weight_clean, xlab = "weight_clean", ylab = "Weight (lbs)", main = "Weight Distribution")
+```
+
+To visualize categorical variables, barplots were made that shows the response value on the x-axis, response count on the y-axis, as well as respective response count above each bar.
+
+```{r, echo = FALSE, fig.width = 4, fig.height = 3}
+sum_plot_cols <- c("Gender", "grade_level", "healthy_feeling", "self_perception_weight", "exercise", "calories_day", "nutritional_check", "calories_chicken", "waffle_calories")
+
+# Subset your columns
+df_sub <- food_subset_no_NA[ , sum_plot_cols]
+
+# Make sure every column is a factor
+df_sub[] <- lapply(df_sub, factor)
+
+# Loop through each variable and make a stacked barplot
+for (col in sum_plot_cols) {
+    counts <- table(df_sub[[col]])
+    bp <- barplot(counts,
+            main = col,
+            ylab = "Count",
+            xlab = "Response",
+            col = rainbow(length(counts)),
+            ylim = c(0, max(counts) + 5))
+    text(x = bp, y = counts, labels = counts, pos = 3, cex = 0.8)
+}
+
+```
+
+## Analysis
+### Basic tests
+Here, I make normal qq plots for weight and GPA, and the results seem to indicate that both follow a normal distribution. Afterwards, I run a t-test between weight and gender. The 95% CI of the t-test is [-41.19941, -18.19580] and it has a p-value of 2.077e-06, meaning that there is a significant difference in weight by gender. Next, correlation was performed between weight and GPA. Both visually and based on the sample correlation = 0.063, there is little evidence of a relationship between weight and GPA. Lastly, I made a bootstrap 95% CI for the t-test between weight and gender. Here, the CI is [-41.16, -18.66], which is similar to the results of the t-test.
+```{r, echo = FALSE, fig.width = 5, fig.height = 4}
+library(car)
+# do qq test on weight_clean and GPA_clean since t-test don't need to be normal, but it's better (I think)
+qqp(food_subset_no_NA$weight_clean, col = 'red', pch = 19, main = "qq plot for weight_clean")
+qqp(food_subset_no_NA$GPA_clean, col = 'red', pch = 19, main = "qq plot for GPA_clean")
+# Both look generally normal
+
+# do t-test on weight_clean and Gender
+t.test(weight_clean ~ Gender, data = food_subset_no_NA)
+
+# do a correlation between weight_clean and GPA_clean
+myCor <- function(x, y){
+  plot(x, y, pch = 19, col = "red", main = "Correlation between weight_clean and GPA_clean", 
+       xlab = "Weight (lbs)", ylab = "GPA")
+  mtext(paste("Sample Correlation =", round(cor(x,y), 3)), side = 3, cex = 1.2)
+}
+myCor(food_subset_no_NA$weight_clean, food_subset_no_NA$GPA_clean)
+
+# do a bootstrap 99% confidence interval on weight_clean and Gender
+n = 10000
+diff_weight_clean <- rep(NA, n)
+for(i in 1:n){
+  s_weight_female <- sample(food_subset_no_NA$weight_clean[food_subset_no_NA$Gender == 1],
+                            sum(food_subset_no_NA$Gender == 1), replace = TRUE)
+  s_weight_male <- sample(food_subset_no_NA$weight_clean[food_subset_no_NA$Gender == 2],
+                            sum(food_subset_no_NA$Gender == 2), replace = TRUE)
+  diff_weight_clean[i] <- mean(s_weight_female) - mean(s_weight_male)
+}
+ci <- quantile(diff_weight_clean, c(0.025, 0.975))
+round(ci, 2)
+
+# make a bootstrapped histogram
+hist(diff_weight_clean, col = "blue", main = "Bootstrapped Sample Means of Weight Diff",
+     xlab = "Weight diff (lbs)", breaks = 50)
+abline(v = ci, lwd = 3, col = "red")
+abline(v = t.test(weight_clean ~ Gender, data = food_subset_no_NA)$conf.int, lwd = 3, col = "green", lty = 2)
+legend("topright", c("Original CI", "Boot CI"), lwd = 3, col = c("green","red"), lty = c(2,1))
+```
+
+### Permutation Test
+Here, a permutation test was performed between weight and gender to see if there is significant difference in weight between gender groups. Using a set seed and n = 10000, permutation was performed and the histogram output is shown below. In the histogram, we can see that our actual difference in means is above all permuted sample means difference in weight, with a p-value of 0 for our given n. This permutation test provides further support for significant difference in weight by gender.
+```{r, echo = FALSE, fig.width = 5, fig.height = 4}
+set.seed(1)
+
+n <- 10000
+perm_diff_weight_clean <- rep(NA, n)
+for (i in 1:n){
+  fake_gender <- sample(food_subset_no_NA$Gender)
+  perm_diff_weight_clean[i] <- mean(food_subset_no_NA$weight_clean[fake_gender == 2]) -
+    mean(food_subset_no_NA$weight_clean[fake_gender == 1])
+}
+
+hist(perm_diff_weight_clean, col = "yellow", main = "Permuted Sample Means Diff in Weight", xlab = "Difference in Mean Weight (lbs)", breaks = 50, xlim = c(-30, 40))
+actualdiff <-
+  mean(food_subset_no_NA$weight_clean[food_subset_no_NA$Gender == 2], na.rm = TRUE) -
+  mean(food_subset_no_NA$weight_clean[food_subset_no_NA$Gender == 1], na.rm = TRUE)
+abline(v = actualdiff, col = "blue", lwd = 3)
+text(actualdiff - 1.2, 300, paste("Actual Diff in Means =", round(actualdiff,2)), srt = 90)
+mtext(paste("Two-sided permutation p-value = ", mean(abs(perm_diff_weight_clean) >= abs(actualdiff))), side = 3, line = 0, cex = 0.8)
+```
+
+### Multiple Regression (Best Subset Regression)
+Here, we run multiple best subsets regression (rsq, adjr2, bic) using all of the variables listed in the Data section to find the best model. The final model I chose to use is adjr2 because it seemed to avoid overfitting (rsq) and had a higher multiple R-squared than bic.
+```{r, include = FALSE}
+library(leaps)
+predictors <- c("Gender", "GPA_clean","grade_level", "healthy_feeling", "self_perception_weight", "exercise", "calories_day", "nutritional_check", "calories_chicken", "waffle_calories")
+food_clean <- food_subset_no_NA[, c("weight_clean", predictors)]
+
+mod2 <- regsubsets(weight_clean ~ ., data = food_clean, nvmax = ncol(food_clean) - 1)
+mod2sum <- summary(mod2)
+mod2sum$which
+```
+```{r, echo = FALSE}
+print("rsq model")
+modnum <- which.max(mod2sum$rsq)
+names(food_clean)[mod2sum$which[modnum, ]][-1]
+food_temp <- food_clean[, mod2sum$which[modnum, ]]
+summary(lm(weight_clean ~ ., data = food_temp))
+```
+
+```{r, echo = FALSE}
+print("adjr2 model")
+modnum <- which.max(mod2sum$adjr2)
+names(food_clean)[mod2sum$which[modnum, ]][-1]
+food_temp <- food_clean[, mod2sum$which[modnum, ]]
+summary(lm(weight_clean ~ ., data = food_temp))
+```
+
+```{r, echo = FALSE}
+print("bic model")
+modnum <- which.min(mod2sum$bic)
+names(food_clean)[mod2sum$which[modnum, ]][-1]
+food_temp <- food_clean[, mod2sum$which[modnum, ]]
+summary(lm(weight_clean ~ ., data = food_temp))
+```
+```{r, include = FALSE}
+modnum <- which.min(mod2sum$cp)
+names(food_clean)[mod2sum$which[modnum, ]][-1]
+food_temp <- food_clean[, mod2sum$which[modnum, ]]
+summary(lm(weight_clean ~ ., data = food_temp))
+```
+
+After selecting adjr2 as our final model, we see that the R-squared is 0.3896, so the three predictors of Gender, grade_level, and self_perception_weight seem to be able to explain a decent portion of variation in weight. Additionally, based on the p-values, it seems that Gender and self_perception_weight play a much larger role than grade_level in predicting an individual's weight. In terms of direction, all of the variables were positive. This means that, as female went to male, grade_level went up, and self_perception_weight went up, the average weight increased by the values under the estimate column.
+```{r, include = FALSE}
+modnum_fin <- which.max(mod2sum$adjr2)
+names(food_clean)[mod2sum$which[modnum_fin, ]][-1]
+food_temp_fin <- food_clean[, mod2sum$which[modnum_fin, ]]
+modfin <- lm(weight_clean ~ ., data = food_temp_fin)
+summary(modfin)
+```
+
+The following residual plots are of the adjr2 model. Based on the qq plot, the data seems to be normally distributed. For the studentized residuals vs fitted values plot, the values generally stay within +/-2. Because of this and the blob-like shape of the residuals, I do not believe the data is violating linearity or homoscedasticity.
+
+```{r, echo = FALSE, fig.width = 5, fig.height = 4}
+library(car)
+myResPlots <- function(model, label){
+  #plot of fitted vs. studentized residuals
+  plot(rstudent(model) ~ model$fitted.values, pch = 19, col = 'red', 
+       xlab = "Fitted Values", ylab = "Studentized Residuals", 
+       main = paste("Fits vs. Studentized Residuals,", label))
+  abline(h = 0, lwd = 3)
+  abline(h = c(2,-2), lty = 2, lwd = 2, col="blue")
+  abline(h = c(3,-3), lty = 2, lwd = 2, col="green")
+  
+  #Normal quantile plot of studentized residuals
+  qqp(rstudent(model), pch = 19, main = paste("NQ Plot of Studentized Residuals,", label))
+  
+  #Plot of Cooks Distances
+  # plot(model, which = 4, lwd = 3, col = 'red')
+  # abline(h = 6/length(model$residuals), col = 'black', lwd = 3, lty = 2)
+}
+
+myResPlots(modfin, "Model for Weight")
+```
+
+### ANOVA
+Here, an ANOVA was performed between weight and self_perception_weight, as self_perception_weight had multiple categorial responses and had a small p-value in the best subsets regression. As a reminder to the coding of self_perception_weight, it has values 1-6, where 1-5 runs a scale from slim to overweight and 6 represents "i dont think myself in these terms". Based on the output below, the p-value being 1.23e-05 shows that average weight differs significantly across self_perception_weight categories.
+```{r, include = FALSE}
+# I honestly don't think I need this in my final report
+weight_perception_mean <- tapply(food_clean$weight_clean, food_clean$self_perception_weight, mean)
+boxplot(weight_clean ~ self_perception_weight, data = food_clean,
+        main = "Weight (lbs) by Self-Perceived Weight",
+        ylab = "Weight (lbs)",
+        xlab = "Self-Perceived Weight")
+points(x = 1:length(weight_perception_mean),
+       y = weight_perception_mean,
+       col = "red",
+       pch = 19)
+```
+
+```{r, echo = FALSE}
+food_clean$self_perception_weight <- factor(food_clean$self_perception_weight)
+
+aov1 <- aov(weight_clean ~ self_perception_weight, data = food_clean)
+summary(aov1)
+```
+
+Here, we do multiple comparisons with Holm correction pairwise t.test. Based on the results, 3+4, 1+5, 2+5, 3+5, 4+5, and 5+6 all have statistically significantly different mean weights.
+```{r, echo = FALSE}
+pairwise.t.test(food_clean$weight_clean, food_clean$self_perception_weight)
+```
+
+Before choosing a model to compare the ANOVA results to, I first wanted to see if the data is normal and the variances are equal using a qq plot and residuals vs fitted values plot. In the qq plot, the data looks pretty normal, but in the residuals vs fitted values plot, it looks like variance is not constant due to a funnel-like shape. To further support the fact that variances are not equal, the sd_ratio was calculated to be 2.418805.
+```{r, echo = FALSE, fig.width = 5, fig.height = 4}
+myResPlots(aov1, label = "Weight (lbs)")
+sd_by_perception <- tapply(food_clean$weight_clean, food_clean$self_perception_weight, sd)
+sd_by_perception
+sd_ratio <- max(sd_by_perception) / min(sd_by_perception)
+sd_ratio
+```
+
+Because we have normal populations with unequal variances, we would like to compare with Welch's ANOVA. When comparing the p-values between Welch's ANOVA and our original ANOVA, Welch's ANOVA has a much higher p-value. This difference in p-values is due to Welch's ANOVA accounting for the unequal variances, thus giving a more conservative p-value.
+```{r, echo = FALSE}
+oneway.test(weight_clean ~ self_perception_weight, data = food_clean)
+summary.aov(aov1)
+```
+
+## Conclusions and Summary
+Overall, it looks like weight is primarily associated with gender and how someone perceives their own weight. Grade level seems to have a smaller influence. Gender and grade level make sense as being associated with weight, as men are known to be larger and denser than women due to a difference in body fat, and some students are still in a growing period throughout undergraduate years, whether that be in height or muscle. As for one's perception of their own weight, it seems that this is mostly applicable when they think they are overweight, as the multiple comparisons test had almost all the pairs include the "overweight" response.

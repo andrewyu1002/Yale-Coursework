@@ -1,0 +1,11 @@
+# Description
+An end-to-end statistical analysis in R examining which lifestyle, demographic, and calorie-perception factors are associated with self-reported body weight in a survey of college students. The project takes a raw, messy survey export through a full cleaning pipeline, then applies a sequence of statistical tests and models, culminating in a best-subsets regression and an ANOVA with multiple comparisons.
+
+# Skills Demonstrated
+Data Cleaning & Wrangling (R): Parsed free-text numeric fields (GPA, weight) containing stray characters and non-numeric entries; applied regex-based text cleaning, whitespace trimming, type coercion, and range-based validity checks; handled missing data via listwise deletion; documented before/after cleaning states.
+Exploratory Data Analysis & Visualization: Built boxplots, bar charts, scatterplots, and normal Q-Q plots to summarize continuous and categorical variables and assess distributional assumptions.
+Statistical Inference: Conducted Welch two-sample t-tests, Pearson correlation analysis, and constructed a bootstrap confidence interval to validate parametric results.
+Resampling Methods: Implemented a permutation test to non-parametrically confirm a significant group difference in weight by gender.
+Predictive Modeling: Performed best-subsets regression (comparing R², adjusted R², and BIC criteria) to select a multiple linear regression model; interpreted coefficient estimates, directionality, and statistical significance; validated model assumptions using studentized residual and Q-Q diagnostic plots.
+ANOVA & Multiple Comparisons: Ran a one-way ANOVA with Holm-corrected pairwise t-tests to identify which categories differed significantly; diagnosed unequal variances and applied Welch's ANOVA as a robust alternative, comparing results and interpreting the impact of the variance correction.
+Technical Reporting: Authored a polished, non-technical-audience-friendly report in RMarkdown with all code suppressed, adhering to strict formatting and page-length constraints, and knitted output to PDF.

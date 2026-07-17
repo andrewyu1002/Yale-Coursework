@@ -1,0 +1,206 @@
+---
+title: "Homework 01 R Basics"
+output:
+  html_document: default
+  word_document: default
+  pdf_document: 
+     fig_height: 5
+     fig_width : 7
+subtitle: Due by 11:59pm, Friday, 9.12.25
+author: S&DS 2300/5300/ENV 757
+---
+_______________________________________________________________________________
+
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+**(1)  RMarkdown Practice**   Change the markdown code below as indicated.
+
+**Make this line bold**
+
+*Make this line italics*
+
+## Make this line a second level header
+
+* Make this line a bullet point
+
+    * Make this line an indented (or level two) bullet point
+
+**[LINK](https://www.nytimes.com/)**   (make the word LINK at left link to the New York Times home page AND make it bold)
+
+`Make this line look like R Code`
+
+Below this line, insert a new R chunk, create a vector called `xvec` that contains the integers 5 through 9, and have R display what is in `xvec`.
+```{r}
+xvec <- 5:9
+xvec
+```
+
+
+**(2)  R Syntax Practice**  Modify the R code below to follow good R Syntax practices
+
+```{r, eval = FALSE}
+x <- 5
+
+x <- c(1, 2, 3)
+
+length(x)
+
+for (i in 1:10) {
+  x <- 1 + 1
+}
+
+x <- 1
+y <- c(3, 4)
+
+```
+
+
+**(3) Data handling**  
+
+(3.1)  Insert a new R code chunk below. 
+```{r}
+# Empty R chunk
+```
+
+(3.2)  Read the .csv stored [HERE](https://raw.githubusercontent.com/jreuning/sds230_data/refs/heads/main/WB_2024.csv) into a new data frame and call is "wb".  This is similar to the World Bank data I discussed in class two (this is a more current version). You can get the longer description of each variable [HERE](https://raw.githubusercontent.com/jreuning/sds230_data/refs/heads/main/WB_2024_NMS.csv)
+```{r}
+wb <- read.csv("https://raw.githubusercontent.com/jreuning/sds230_data/refs/heads/main/WB_2024.csv")
+```
+
+(3.3)  Get the dimension of wb.
+```{r}
+dim(wb)
+```
+
+(3.4)  Get the variable names of wb.
+```{r}
+names(wb)
+```
+
+(3.5)  Show the first 5 lines of wb.
+```{r}
+wb[1:5, ]
+```
+
+(3.6)  Get the data type of each variable.
+```{r}
+str(wb)
+```
+
+(3.7)  In your code, insert a comment that gives the data type of the variable `GNI`? 
+```{r}
+# str(wb$GNI)
+# This returns: int [1:217] 360 6770 4490 NA 50080 1870 18710 11590 5960 33410 ...
+```
+
+(3.8)  Create a new object called `wb_Subset` that has only the variables Country, GNI, EnergyUse, and Measles (in that order) AND only for countries where GNI is greater than 70000. Make sure you show the value of `wb_Subset`.
+```{r}
+wb_Subset <- subset(wb, GNI > 70000, c(Country, GNI, EnergyUse, Measles))
+wb_Subset
+```
+
+(3.9)  Get summary statistics for `Debt`. Store the results in a new object called `wb_Stats`.  Incidentally, `wb_Stats` will be a vector!
+```{r}
+wb_Stats <- summary(wb$Debt)
+wb_Stats
+```
+
+(3.10)  Get the length of `wb_Stats`.
+```{r}
+length(wb_Stats)
+```
+
+(3.11)  Get r to show the following elements of `wb_Stats` : 1,2,3,5,6 AND round the result to 1 decimal place.
+```{r}
+round(wb_Stats[1:6], 1)
+```
+
+
+**(4) Plots**  
+
+(4.1) Using the WB dataset loaded above, make a scatterplot of "Rural" on the x axis and "Measles" on the y axis. Include a main title, axis titles, and a non-default symbol color and symbol type. *Hint: check out ?par or see examples from class 1 or class 3*.
+```{r}
+plot(wb$Rural, 
+     wb$Measles,
+     col = 'violet',
+     pch = 18,
+     xlab = "Rural Population %",
+     ylab = "Measles Immunization %",
+     main = "Measles Immunization as Compared to Rural Population Percent")
+```
+
+(4.2) Make a boxplot of the the following `wb` variables that are all percentages: `Measles`, `Military`, `Renewable`, `Rural`. You want all four variables on one plot. Ensure the plot has a main title, axis labels, and a unique color for each variable.  
+```{r}
+boxplot(wb$Measles, wb$Military, wb$Renewable, wb$Rural,
+        names = c("Measles", "Military", "Renewable", "Rural"),
+        col = c('red', 'cyan', 'green', 'pink'),
+        ylab = "Percentage",
+        main = "Meales, Military, Renewable, and Rural Percentages")
+```
+
+**(5) Lists**  The code below creates a list called `aList`
+
+(5.1)  Compute the sum of the second element of the list's third element. Store the result into an object named `mySum`. You'll want to use the `sum()` function.
+```{r}
+aList <- list(c(1, 5, 4), letters[c(1, 6, 4, 9, 22, 3)], list(c(1, 1, 1), 
+                        c(14, 13, 12), c(3, 2, 1)), c(runif(8)))
+
+mySum <- sum(aList[[3]][[2]])
+mySum
+```
+
+(5.2) What is the difference between what is returned from the following two commands?
+```{r }
+
+aList[[3]][2]
+aList[[3]][[2]]
+```
+*For aList[[3]][2] (the first one), it returns the second item from the third item of the list AS A LIST. In contrast, alist[[3]][[2]] (the second one) returns the second item from the third item of the list AS A VECTOR.*
+
+**(6) Pseudo-Coding**  Your boss at the comes to you to tell you that the mayor wants a report that analyzes various data the city government has collected across multiple departments over the last 35 years. This data was created by an army of summer undergraduate interns, and has a mix of numeric, character, and categorical/factor data. The spreadsheet you are given has one row per neighborhood.  For each neighborhood, there are measurements of crime statistics, housing prices, number of parks, number of grocery stores, nubmer of driveways, residence types, tax amount, tax burden, past evictions, and so on.  Each row has measurements for one year, so there are 35 rows per neighborhood (and of course, lots of missing data). 
+
+Using only the tools you've learned so far, your job is to clean, process, and begin to wrangle this data in R and present some preliminary plots of the data you have observed. Write out in words the steps you would take to better understand the spreadsheet, learn what data it contains, and some graphs you might generate based on the tools used in the homework above.  DO NOT INCLUDE ANY R-CODE.
+
+*1) Import and Inspect*
+
+- *read.csv() data into df*
+- *names(df), dim(df), str(df), summary(df)*
+
+*2) Preprocessing*
+
+- *Find rows and columns with lots of missing data (can use complete.cases())*
+- *Identify cells with illogical data (negative for number of drivers ways, decimal for number of parks, etc.)*
+- *Change cells with illogical data to empty*
+- *Remove rows and columns that have high amounts of missing data (this will capture the illogical data too)*
+    - *Another option is to impute the data if deemed possible*
+- *Check for repeat rows (i.e., same neighborhood and same year)*
+    - *Drop the row with more missing/illogical data*
+- *Standardize columns*
+    - *Convert each individual column to be the same type. For example, a column may have the same data as numbers, but can be numeric or characters.*
+    - *Convert all columns to some type of number, whether that be num, int, or Factor.*
+
+*3) Processing*
+
+- *Line graph for housing prices*
+    - *Housing price on the y-axis*
+    - *Year on the x-axis*
+    - *Each neighborhood gets a unique line with a unique color, all line width 2*
+    - *Include legend in graph*
+- *Scatterplot for tax burden and past evictions*
+    - *Past evictions on the y-axis*
+    - *Tax burden on the x-axis*
+    - *Each year for each neighborhood gets a dot on this scatterplot*
+    - *Include a regression line*
+    - *Each year gets a unique color following a color gradient to visualize time*
+
+&nbsp;  
+&nbsp;
+&nbsp;
+&nbsp;
+
+
+
+
