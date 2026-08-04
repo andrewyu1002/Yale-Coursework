@@ -1,0 +1,247 @@
+---
+title: "expanded_query_results"
+output: html_document
+---
+
+```{r}
+results <- read.csv("/Users/andrewyu/Documents/Yale/Fall 2025/Clinical Database Management Systems and Ontologies/Final Project/expanded_query_results_v3.csv")
+colnames(results)
+dim(results)
+```
+
+```{r}
+length(unique(results$subject_id))
+length(unique(results$hadm_id))
+length(unique(results$stay_id))
+```
+
+```{r}
+boxplot(min_pf_ratio ~ inhospital_death,
+        data = results,
+        xlab = "In-Hospital Death",
+        ylab = "Minimum PaO2/FiO2 Ratio",
+        names = c("No", "Yes"),
+        col = c("skyblue", "pink"),
+        main = "PF Ratio by In-Hospital Death")
+```
+According to (https://litfl.com/pao2-fio2-ratio/), at sea level, the normal PaO2/FiO2 ratio is ~ 400-500 mmHg (~55-65 kPa).
+```{r}
+# Group by inhospital_death
+bp <- boxplot(min_pf_ratio ~ inhospital_death, data = results, plot = FALSE)
+
+# bp$out contains all outlier values
+length(bp$out)  # total number of outlier values
+```
+Here, we see that only 487 out of our 7618 min_pf_ratio readings (per each stay_id) are considered outliers, but all these patients here have sepsis. Below, we graph a more close up view just to take a look at things.
+
+```{r}
+boxplot(min_pf_ratio ~ inhospital_death,
+        data = results,
+        xlab = "In-Hospital Death",
+        ylab = "Minimum PaO2/FiO2 Ratio",
+        names = c("No", "Yes"),
+        col = c("skyblue", "pink"),
+        main = "PF Ratio by In-Hospital Death",
+        ylim = c(0, 600))
+```
+In the code chunk below, we're making a table to visualize the number/percent of each people in each ards category, as well as seeing the in hospital death rate
+```{r}
+# Compute min PF ratio per hadm_id
+min_pf_per_hadm <- aggregate(min_pf_ratio ~ hadm_id, data = results, FUN = min)
+
+# Assign ARDS severity per admission based on min PF ratio
+min_pf_per_hadm$ards_severity <- cut(
+  min_pf_per_hadm$min_pf_ratio,
+  breaks = c(-Inf, 100, 200, 300, Inf),
+  labels = c("Severe", "Moderate", "Mild", "No ARDS")
+)
+
+# Add in-hospital death (one row per hadm_id)
+hadm_death <- unique(results[, c("hadm_id", "inhospital_death")])
+results_adm <- merge(min_pf_per_hadm, hadm_death, by = "hadm_id")
+
+# Total number of admissions
+N <- nrow(results_adm)
+
+# Counts per severity
+counts <- table(results_adm$ards_severity)
+
+# Percent of total
+pct <- prop.table(counts) * 100
+
+# In-hospital death percent per severity
+death_pct <- tapply(results_adm$inhospital_death, results_adm$ards_severity,
+                    function(x) mean(x == 1, na.rm = TRUE) * 100)
+
+# Assemble final summary table
+summary_table <- data.frame(
+  ards_severity = names(counts),
+  total_admissions = paste0(counts, " (", sprintf("%.1f", pct), "%)"),
+  inhospital_death_pct = sprintf("%.1f%%", death_pct),
+  row.names = NULL
+)
+
+summary_table
+```
+Note to self: In the above table, the ards_severity is much worse than my previous query. The reason for this is becuase the hadm_id before only took one pf_ratio, but here we are getting the worst value recorded.
+
+Here, I want to see the survival rate of each type of ICU care unit
+```{r}
+# 1. Aggregate stays per hadm_id
+hadm_summary <- aggregate(
+  first_careunit ~ hadm_id + inhospital_death,
+  data = results,
+  FUN = function(x) {
+    u <- unique(x)
+    if(length(u) > 1) "Multiple/Mixed ICU Stays" else u
+  }
+)
+
+# 2. Create table for barplot
+plot_table <- table(hadm_summary$first_careunit, hadm_summary$inhospital_death)
+colnames(plot_table) <- c("Survived", "Died")  # 0 = Survived, 1 = Died
+
+# 3. Order ICU types by total admissions (most to least)
+total_per_icu <- rowSums(plot_table)
+plot_table <- plot_table[order(total_per_icu, decreasing = FALSE), ]
+
+# 4. Only annotate counts for top 5 bars
+top_n <- 12
+
+# 5. Expand left margin and shrink y-axis labels
+par(mar = c(5, 12, 4, 5), cex.axis = 0.5)  # cex.axis < 1 shrinks labels
+
+# 6. Horizontal stacked barplot
+bp <- barplot(
+  t(plot_table),      # transpose for stacking by death status
+  beside = FALSE,     
+  col = c("blue", "red"),
+  horiz = TRUE,
+  las = 1,            
+  xlab = "Number of Admissions",
+  main = "Admissions by First Care Unit and In-Hospital Death",
+  xlim = c(0, max(colSums(plot_table)) * 1.25) # extend for survival %
+)
+
+# 7. Add counts inside bars for top 5 ICU types
+for(i in seq_len(nrow(plot_table))) {
+  survived <- plot_table[i, "Survived"]
+  died <- plot_table[i, "Died"]
+  
+  y_pos <- bp[i]
+  
+  if(i >= top_n) {  # only for top 5
+    if(survived > 0) text(survived / 2, y_pos, survived, col = "white")
+    if(died > 0) text(survived + died / 2, y_pos, died, col = "white")
+  }
+  
+  # Add survival percentage on the right for all bars
+  total <- survived + died
+  surv_pct <- round(survived / total * 100, 1)
+  text(total + max(colSums(plot_table)) * 0.02, y_pos, paste0(surv_pct, "%"), adj = 0)
+}
+
+# 8. Legend
+legend("bottomright", legend = c("Survived", "Died"), fill = c("blue", "red"))
+
+```
+
+Making a table of ventilation survival rate
+```{r}
+# # 1. Collapse ventilation per hadm_id
+# vent_status <- aggregate(ventilation_status ~ hadm_id, data = results, FUN = function(x) {
+#   x <- unique(x)
+#   
+#   if (all(x == "None")) {
+#     return("No")
+#   } else if (all(x != "None" & x != "")) {
+#     return("Yes")
+#   } else if (all(x == "")) {
+#     return("Null")
+#   } else {
+#     return("Mixed")
+#   }
+# })
+# 
+# # 2. Merge with results_adm (one row per hadm_id)
+# results_adm <- merge(results_adm, vent_status, by = "hadm_id", all.x = TRUE)
+# 
+# # Total number of admissions
+# N <- nrow(results_adm)
+# 
+# # Counts per severity
+# counts <- table(results_adm$ards_severity, results_adm$ventilation_status)
+# 
+# # Percent of total
+# pct <- prop.table(counts) * 100
+# 
+# # In-hospital death percent per severity
+# death_pct <- tapply(results_adm$inhospital_death, list(results_adm$ards_severity, results_adm),
+#                     function(x) mean(x == 1, na.rm = TRUE) * 100)
+
+# 1. Collapse ventilation per hadm_id
+vent_status <- aggregate(ventilation_status ~ hadm_id, data = results, FUN = function(x) {
+  x <- unique(x)
+  
+  if (all(x == "None")) {
+    return("No")
+  } else if (all(x != "None" & x != "")) {
+    return("Yes")
+  } else if (all(x == "")) {
+    return("Null")
+  } else {
+    return("Mixed")
+  }
+})
+
+# 2. Merge with results_adm (one row per hadm_id)
+results_adm <- merge(results_adm, vent_status, by = "hadm_id", all.x = TRUE)
+
+# 3. Total number of admissions
+N <- nrow(results_adm)
+
+# 4. Counts per severity and ventilation status
+counts <- table(results_adm$ards_severity, results_adm$ventilation_status)
+
+# 5. Percent of total
+pct <- prop.table(counts) * 100
+
+# 6. In-hospital death percent per severity and ventilation
+death_pct <- tapply(
+  results_adm$inhospital_death, 
+  list(results_adm$ards_severity, results_adm$ventilation_status),
+  function(x) mean(x == 1, na.rm = TRUE) * 100
+)
+
+# 7. Convert to data frame
+summary_table <- as.data.frame(as.table(death_pct))
+colnames(summary_table) <- c("ards_severity", "ventilation_status", "inhospital_death_pct")
+
+# 8. Add counts and percent of total
+summary_table$total_admissions <- paste0(
+  as.vector(counts[cbind(as.character(summary_table$ards_severity), 
+                         as.character(summary_table$ventilation_status))]),
+  " (",
+  sprintf("%.1f", as.vector(pct[cbind(as.character(summary_table$ards_severity), 
+                                      as.character(summary_table$ventilation_status))])),
+  "%)"
+)
+
+# 9. Format death percent
+summary_table$inhospital_death_pct <- sprintf("%.1f%%", summary_table$inhospital_death_pct)
+
+# 10. Order factors
+severity_order <- c("Severe", "Moderate", "Mild", "No ARDS")
+vent_order <- c("Yes", "No", "Mixed")
+
+summary_table$ards_severity <- factor(summary_table$ards_severity, levels = severity_order)
+summary_table$ventilation_status <- factor(summary_table$ventilation_status, levels = vent_order)
+
+# 11. Order the table
+summary_table <- summary_table[order(summary_table$ards_severity, summary_table$ventilation_status), ]
+
+summary_table
+
+```
+
+
