@@ -1,0 +1,81 @@
+Using device: cpu
+── Split sizes ──
+  Train: 24456 | Tune: 3061 | Test: 3061
+
+── Rows per care unit across splits ──
+  Medical Intensive Care Unit (MICU): train=7614, tune=952, test=952
+  Surgical Intensive Care Unit (SICU): train=2509, tune=314, test=314
+  Medical/Surgical Intensive Care Unit (MICU/SICU): train=5136, tune=642, test=642
+  Trauma SICU (TSICU): train=1864, tune=234, test=234
+  Coronary Care Unit (CCU): train=3661, tune=458, test=458
+  Cardiac Vascular Intensive Care Unit (CVICU): train=2740, tune=343, test=343
+  Neuro Surgical Intensive Care Unit (Neuro SICU): train=310, tune=39, test=39
+  Neuro Intermediate: train=416, tune=52, test=52
+  Intensive Care Unit (ICU): train=0, tune=0, test=0
+  PACU: train=38, tune=5, test=5
+  Neuro Stepdown: train=77, tune=10, test=10
+  Surgery/Vascular/Intermediate: train=91, tune=12, test=12
+  Medicine: train=0, tune=0, test=0
+  Surgery/Trauma: train=0, tune=0, test=0
+  Medicine/Cardiology Intermediate: train=0, tune=0, test=0
+
+── Skipped units ──
+  Intensive Care Unit (ICU) (n=26): too small or no outcome variation
+  Medicine (n=8): too small or no outcome variation
+  Surgery/Trauma (n=7): too small or no outcome variation
+  Medicine/Cardiology Intermediate (n=1): too small or no outcome variation
+
+── Tuning on validation set ──
+  {'hidden_dims': [64, 32], 'dropout': 0.3, 'lr': 0.001, 'epochs': 30, 'batch_size': 32} → Tune AUC: 0.7914
+  {'hidden_dims': [128, 64], 'dropout': 0.3, 'lr': 0.001, 'epochs': 30, 'batch_size': 32} → Tune AUC: 0.7823
+
+  {'hidden_dims': [128, 64, 32], 'dropout': 0.4, 'lr': 0.0005, 'epochs': 50, 'batch_size': 64} → Tune AUC: 0.7908
+  {'hidden_dims': [64, 32], 'dropout': 0.2, 'lr': 0.0005, 'epochs': 50, 'batch_size': 32} → Tune AUC: 0.7687
+  {'hidden_dims': [256, 128, 64], 'dropout': 0.4, 'lr': 0.001, 'epochs': 30, 'batch_size': 64} → Tune AUC: 0.7943
+
+Best params: {'hidden_dims': [256, 128, 64], 'dropout': 0.4, 'lr': 0.001, 'epochs': 30, 'batch_size': 64}
+Tune AUC:    0.7943
+
+── Federated training: 3 rounds ──
+
+  Round 1
+
+    Clients trained: 11
+    Tune AUC after round 1: 0.7943
+
+  Round 2
+
+    Clients trained: 11
+    Tune AUC after round 2: 0.8031
+
+  Round 3
+    Clients trained: 11
+    Tune AUC after round 3: 0.8022
+
+── Global Model AUC ──
+  Train: 0.8300
+  Tune: 0.8022
+  Test: 0.8137
+
+── Per-Unit Local Model Test AUC ──
+  Medical Intensive Care Unit (MICU): AUC = 0.8078
+  Surgical Intensive Care Unit (SICU): AUC = 0.7880
+  Medical/Surgical Intensive Care Unit (MICU/SICU): AUC = 0.7956
+  Trauma SICU (TSICU): AUC = 0.7849
+  Coronary Care Unit (CCU): AUC = 0.7742
+  Cardiac Vascular Intensive Care Unit (CVICU): AUC = 0.7961
+  Neuro Surgical Intensive Care Unit (Neuro SICU): AUC = 0.7726
+  Neuro Intermediate: AUC = 0.7756
+  PACU: AUC = 0.8102
+  Neuro Stepdown: AUC = 0.7940
+  Surgery/Vascular/Intermediate: AUC = 0.7870
+
+
+
+
+── Centralized Baseline Training ──
+
+── Centralized Model AUC ──
+  Train: 0.8425
+  Tune: 0.8113
+  Test: 0.8240

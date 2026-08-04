@@ -1,0 +1,120 @@
+── Split sizes ──
+  Train: 24456 | Tune: 3061 | Test: 3061
+
+── Rows per care unit across splits ──
+  Medical Intensive Care Unit (MICU): train=7614, tune=952, test=952
+  Surgical Intensive Care Unit (SICU): train=2509, tune=314, test=314
+  Medical/Surgical Intensive Care Unit (MICU/SICU): train=5136, tune=642, test=642
+  Trauma SICU (TSICU): train=1864, tune=234, test=234
+  Coronary Care Unit (CCU): train=3661, tune=458, test=458
+  Cardiac Vascular Intensive Care Unit (CVICU): train=2740, tune=343, test=343
+  Neuro Surgical Intensive Care Unit (Neuro SICU): train=310, tune=39, test=39
+  Neuro Intermediate: train=416, tune=52, test=52
+  Intensive Care Unit (ICU): train=0, tune=0, test=0
+  PACU: train=38, tune=5, test=5
+  Neuro Stepdown: train=77, tune=10, test=10
+  Surgery/Vascular/Intermediate: train=91, tune=12, test=12
+  Medicine: train=0, tune=0, test=0
+  Surgery/Trauma: train=0, tune=0, test=0
+  Medicine/Cardiology Intermediate: train=0, tune=0, test=0
+
+── Skipped units ──
+  Intensive Care Unit (ICU) (n=26): too small or no outcome variation
+  Medicine (n=8): too small or no outcome variation
+  Surgery/Trauma (n=7): too small or no outcome variation
+  Medicine/Cardiology Intermediate (n=1): too small or no outcome variation
+
+── Tuning on validation set ──
+  {'n_estimators': 50, 'max_depth': 5} → Tune AUC: 0.7889
+  {'n_estimators': 100, 'max_depth': 5} → Tune AUC: 0.7889
+  {'n_estimators': 100, 'max_depth': 10} → Tune AUC: 0.7906
+  {'n_estimators': 100, 'max_depth': None} → Tune AUC: 0.7833
+  {'n_estimators': 200, 'max_depth': 10} → Tune AUC: 0.7906
+
+Best params: {'n_estimators': 100, 'max_depth': 10} (Tune AUC: 0.7906)
+
+── Final federated training ──
+  ✓ Medical Intensive Care Unit (MICU): n=7614, trees=100
+  ✓ Surgical Intensive Care Unit (SICU): n=2509, trees=100
+  ✓ Medical/Surgical Intensive Care Unit (MICU/SICU): n=5136, trees=100
+  ✓ Trauma SICU (TSICU): n=1864, trees=100
+  ✓ Coronary Care Unit (CCU): n=3661, trees=100
+  ✓ Cardiac Vascular Intensive Care Unit (CVICU): n=2740, trees=100
+  ✓ Neuro Surgical Intensive Care Unit (Neuro SICU): n=310, trees=100
+  ✓ Neuro Intermediate: n=416, trees=100
+  ✓ PACU: n=38, trees=100
+  ✓ Neuro Stepdown: n=77, trees=100
+  ✓ Surgery/Vascular/Intermediate: n=91, trees=100
+
+  Total trees in global forest: 102
+
+── Global Model AUC ──
+  Train: 0.8568
+  Tune: 0.7906
+  Test: 0.8107
+
+── Per-Unit Local Model Test AUC ──
+  Medical Intensive Care Unit (MICU): AUC = 0.8116
+  Surgical Intensive Care Unit (SICU): AUC = 0.7912
+  Medical/Surgical Intensive Care Unit (MICU/SICU): AUC = 0.7978
+  Trauma SICU (TSICU): AUC = 0.7882
+  Coronary Care Unit (CCU): AUC = 0.7933
+  Cardiac Vascular Intensive Care Unit (CVICU): AUC = 0.7864
+  Neuro Surgical Intensive Care Unit (Neuro SICU): AUC = 0.7268
+  Neuro Intermediate: AUC = 0.7285
+  PACU: AUC = 0.6400
+  Neuro Stepdown: AUC = 0.6174
+  Surgery/Vascular/Intermediate: AUC = 0.6214
+
+── Global Feature Importance (avg across trees) ──
+         feature  importance
+     kdigo_stage    0.248682
+urineoutput_24hr    0.064313
+  heart_rate_max    0.053998
+        mbp_mean    0.051823
+         mbp_min    0.050558
+         mbp_max    0.049941
+  heart_rate_min    0.048603
+  creatinine_max    0.046509
+      anchor_age    0.043797
+         bun_max    0.043040
+ bicarbonate_min    0.040336
+  creatinine_min    0.038752
+         bun_min    0.036811
+   potassium_max    0.036563
+   potassium_min    0.036262
+      sodium_max    0.036121
+ bicarbonate_max    0.034803
+      sodium_min    0.033029
+      gender_bin    0.006060
+
+
+
+── Centralized Baseline Training ──
+
+── Centralized Model AUC ──
+  Train: 0.9028
+  Tune: 0.8069
+  Test: 0.8210
+
+── Centralized Feature Importance ──
+         feature  importance
+     kdigo_stage    0.444864
+urineoutput_24hr    0.059412
+  heart_rate_max    0.043428
+  creatinine_max    0.039962
+        mbp_mean    0.038853
+      anchor_age    0.038461
+         mbp_min    0.038384
+  creatinine_min    0.033366
+         mbp_max    0.031783
+         bun_max    0.029470
+  heart_rate_min    0.027772
+         bun_min    0.026776
+      sodium_max    0.024963
+   potassium_max    0.024660
+ bicarbonate_min    0.024379
+   potassium_min    0.023259
+ bicarbonate_max    0.023117
+      sodium_min    0.021938
+      gender_bin    0.005155

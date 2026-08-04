@@ -1,0 +1,16 @@
+# Description:
+This project simulates a federated learning (FL) pipeline for predicting prolonged ICU length-of-stay (≥7 days) in patients with Acute Kidney Injury (AKI), using the MIMIC-IV v3.1 critical care database from Beth Israel Deaconess Medical Center. Patient data was partitioned by ICU care unit to simulate 11 independent "client hospitals," each training locally on its own data.A central server aggregates model updates via FedAvg (weighted by client dataset size) over multiple communication rounds, producing a global model without any raw patient data leaving its originating unit.
+
+Key result: the federated global models matched centralized performance within ~0.01 AUC across all four model families, and consistently outperformed individual care units' local models. These results demonstrate that cross-institutional collaboration is viable without transferring protected health information. Additionally, kdigo_stage (kidney injury severity) and 24-hour urine output emerged as the dominant predictors across every model family.
+
+# Skills Demonstrated:
+Federated learning implementation: Built a FedAvg-based FL framework across four distinct model architectures (LASSO Regression, Federated Random Forest, XGBoost, Deep Learning), including client partitioning, weighted aggregation, and multi-round training/evaluation.
+Healthcare data engineering: Queried and cleaned a large real-world clinical database (MIMIC-IV) via BigQuery, handled missing data via imputation, defined a clinical cohort using ICD-9/ICD-10 codes, and engineered lab/vital-sign features.
+Applied machine learning: Implemented and hyperparameter-tuned regularized logistic regression, random forests, gradient-boosted trees, and a PyTorch deep learning model for binary classification on imbalanced clinical outcome data.
+Model evaluation & comparison: Designed an evaluation protocol comparing federated, centralized, and per-client baselines using AUC across train/validation/test splits; interpreted feature importances across model families.
+Privacy-aware ML system design: Reasoned about HIPAA/PHI constraints and designed a system architecture (local training + weight-only aggregation) that satisfies real-world data-governance requirements.
+Data visualization & communication: Produced comparative bar charts (per-unit vs. federated AUC, federated vs. centralized AUC, cross-model feature importance) and communicated technical results and limitations clearly in a presentation format.
+Critical evaluation of limitations: Identified and articulated key limitations (single-institution data simulating federation, exclusion of high-missingness variables, small-sample client instability, LOS as a non-purely-biological outcome) and proposed concrete next steps (advanced aggregation methods, membership-inference/reconstruction attack analysis).
+Team collaboration & project management: Contributed to a multi-person project with clearly divided responsibilities across data prep, methodology, evaluation, and reporting.
+
+# Team: Vincent Angelo, Andrew Yu, Sina Ovali
