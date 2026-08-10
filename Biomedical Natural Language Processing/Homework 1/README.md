@@ -2,8 +2,8 @@
 A text classification assignment that predicts which section of a scientific abstract a sentence belongs to (Background, Methods, Results, or Conclusions) using both classical machine learning and transformer-based deep learning approaches. 
 
 Two modeling approaches are implemented and benchmarked against each other:
-- Feature-based ML: TF-IDF vectorization combined with classical classifiers (Linear SVC, Random Forest)
-- Deep learning with pretrained transformers: Fine-tuning BiomedBERT using the Hugging Face Trainer API
+- Feature-based ML: TF-IDF vectorization combined with classical classifiers (Linear SVC, Random Forest).
+- Deep learning with pretrained transformers: Fine-tuning BiomedBERT using the Hugging Face Trainer API.
 
 # Skills Demonstrated:
 - Feature engineering with TF-IDF vectorization for text data.
