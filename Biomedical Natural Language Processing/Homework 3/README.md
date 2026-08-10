@@ -16,13 +16,16 @@ NLP & Sequence Labeling
 - Understanding and implementing BIO tagging for named entity recognition.
 - Handling the subword-to-word label alignment problem inherent to transformer tokenizers.
 - Fine-tuning a pretrained transformer (bert-base-cased) with a token-classification head for a downstream sequence labeling task.
+
 Model Training & Evaluation
 - Building an end-to-end Hugging Face training pipeline.
 - Implementing a custom compute_metrics function using seqeval for entity-level precision, recall, F1, and token-level accuracy.
 - Selecting model checkpoints based on validation F1 rather than loss alone, and understanding why a single metric (e.g., accuracy) can be misleading on imbalanced sequence-labeling tasks.
+
 Experimentation & Hyperparameter Tuning
 - Systematic hyperparameter search (independent sweep over learning rate and epoch count, followed by a combined final run).
 - Documenting and justifying a tuning strategy based on validation results.
+
 Error Analysis
 - Per-label precision breakdown to diagnose specific model weaknesses (e.g., harder performance on multi-token entities vs. single-token entities).
 - Confusion analysis between true and predicted BIO labels to identify systematic error patterns.
