@@ -1,16 +1,10 @@
 # Skills Demonstrated:
-## Data acquisition and cleaning
-Loading real-world, third-party data (NYT COVID-19 dataset) and converting cumulative counts into period-over-period deltas (Ex. 2), including recognizing and explaining anomalies in the raw data (negative case counts from data revisions) rather than silently working around them.
-## Time-series analysis
-Working with pandas Timestamp objects, computing peak dates via idxmax(), and calculating elapsed time between events using Timedelta arithmetic (Ex. 2).
-## Relational data access
-Querying a SQLite database directly into a pandas DataFrame with sqlite3 (Ex. 3), a common pattern when working with EHR or other structured backend data.
-## Descriptive statistics & exploratory data analysis
-Computing mean/std/min/max, choosing histogram bin counts using a justified method (Freedman-Diaconis rule), and visually identifying outliers via scatterplots (Ex. 3).
-## Data visualization
-Building multi-series line charts, histograms, and scatterplots with matplotlib (Ex. 2-4).
-## Simulation & statistical inference
-Implementing randomized response and recovering an unbiased population estimate from noisy individual responses (Ex. 4).
+- Data acquisition and cleaning: Loading real-world, third-party data (NYT COVID-19 dataset) and converting cumulative counts into period-over-period deltas (Ex. 2), including recognizing and explaining anomalies in the raw data (negative case counts from data revisions) rather than silently working around them.
+- Time-series analysis: Working with pandas Timestamp objects, computing peak dates via idxmax(), and calculating elapsed time between events using Timedelta arithmetic (Ex. 2).
+- Relational data access: Querying a SQLite database directly into a pandas DataFrame with sqlite3 (Ex. 3), a common pattern when working with EHR or other structured backend data.
+- Descriptive statistics & exploratory data analysis: Computing mean/std/min/max, choosing histogram bin counts using a justified method (Freedman-Diaconis rule), and visually identifying outliers via scatterplots (Ex. 3).
+- Data visualization: Building multi-series line charts, histograms, and scatterplots with matplotlib (Ex. 2-4).
+- Simulation & statistical inference: Implementing randomized response and recovering an unbiased population estimate from noisy individual responses (Ex. 4).
 
 # Exercise 1:
 ## Instructions

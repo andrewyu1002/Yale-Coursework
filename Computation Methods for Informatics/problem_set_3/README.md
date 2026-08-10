@@ -1,12 +1,8 @@
 # Skills Demonstrated:
-## Numerical Optimization & API Integration (Exercise 1)
-Implemented gradient descent from scratch (no optimization libraries), including numerical gradient estimation via finite differences. Made HTTP requests to a live API and handled rate-limit/etiquette considerations. Selected and justified hyperparameters (learning rate, convergence tolerance, iteration caps) and distinguished local vs. global minima.
-## Unsupervised Machine Learning & Geospatial Analysis (Exercise 2)
-Implemented k-means / Lloyd's algorithm from scratch on non-Euclidean data. Applied cosine similarity and 3D Cartesian transforms to cluster points on a sphere. Produced publication-quality geospatial visualizations with proper map projections (cartopy/Robinson projection). Practiced responsible data sourcing and license attribution (CC BY 4.0).
-## Scientific Computing & Simulation (Exercise 3)
-Built a compartmental epidemiological model (SIR) using a custom Explicit Euler integrator. Ran systematic parameter sweeps and visualized multi-dimensional results as heatmaps (plotnine/ggplot). Extracted quantitative insights (peak timing, peak magnitude) programmatically rather than by inspection.
-## Full-Stack Web Development (Exercise 4)
-Built an interactive Flask web application connecting a pandas data pipeline to a live front end. Used HTML forms and POST request handling to create a functioning data-lookup tool. Demonstrated ability to turn static analysis into an accessible, interactive product.
+- Numerical Optimization & API Integration (Exercise 1): Implemented gradient descent from scratch (no optimization libraries), including numerical gradient estimation via finite differences. Made HTTP requests to a live API and handled rate-limit/etiquette considerations. Selected and justified hyperparameters (learning rate, convergence tolerance, iteration caps) and distinguished local vs. global minima.
+- Unsupervised Machine Learning & Geospatial Analysis (Exercise 2): Implemented k-means / Lloyd's algorithm from scratch on non-Euclidean data. Applied cosine similarity and 3D Cartesian transforms to cluster points on a sphere. Produced publication-quality geospatial visualizations with proper map projections (cartopy/Robinson projection). Practiced responsible data sourcing and license attribution (CC BY 4.0).
+- Scientific Computing & Simulation (Exercise 3): Built a compartmental epidemiological model (SIR) using a custom Explicit Euler integrator. Ran systematic parameter sweeps and visualized multi-dimensional results as heatmaps (plotnine/ggplot). Extracted quantitative insights (peak timing, peak magnitude) programmatically rather than by inspection.
+- Full-Stack Web Development (Exercise 4): Built an interactive Flask web application connecting a pandas data pipeline to a live front end. Used HTML forms and POST request handling to create a functioning data-lookup tool. Demonstrated ability to turn static analysis into an accessible, interactive product.
 
 # Exercise 1
 ## Instructions

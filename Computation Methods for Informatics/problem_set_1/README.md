@@ -1,22 +1,13 @@
 # Skills Demonstrated:
-## Data parsing & wrangling
-Parsed and queried a large XML dataset, including attribute extraction and filtering.
-## Data visualization
-Built histograms, bar charts, and log-log plots with matplotlib and plotnine/ggplot-style grammar-of-graphics syntax; annotated plots with computed values.
-## Algorithm design & implementation
-Implemented binary search, boundary-search (bisection) variants for range queries, bubble sort (alg1), and a merge sort (alg2) from scratch without relying on built-in library implementations.
-## Recursive data structures
-Designed and implemented a binary search tree (BST) from a bare class skeleton.
-## Algorithmic complexity analysis (Big-O)
-Reasoned about and empirically validated time complexity (O(log n), O(n), O(n log n), O(n²)) by benchmarking real runtimes with time.perf_counter, plotting results against scaled reference curves on log-log axes, and interpreting where empirical results matched or diverged from theory.
-## Performance benchmarking methodology
-Experiments using numpy.logspace for evenly-spaced sample sizes on a log scale, isolated the operation under test from setup/data-generation cost, and used repeated trials to avoid single-point bias.
-## Numerical computing & floating-point literacy
-Investigated IEEE 754 floating-point precision limits (loss of precision in large-number addition, and instability in finite-difference derivative approximations as step size shrinks).
-## Testing & validation practices
-Wrote and documented explicit test cases (including edge cases like negative numbers, floats, and empty strings) to verify correctness of custom data structures and functions before relying on them.
-## Technical writing & communication
-Documented methodology, hypotheses, and conclusions clearly enough for a third party to follow and verify.
+- Data parsing & wrangling: Parsed and queried a large XML dataset, including attribute extraction and filtering.
+- Data visualization: Built histograms, bar charts, and log-log plots with matplotlib and plotnine/ggplot-style grammar-of-graphics syntax; annotated plots with computed values.
+- Algorithm design & implementation: Implemented binary search, boundary-search (bisection) variants for range queries, bubble sort (alg1), and a merge sort (alg2) from scratch without relying on built-in library implementations.
+- Recursive data structures: Designed and implemented a binary search tree (BST) from a bare class skeleton.
+- Algorithmic complexity analysis (Big-O): Reasoned about and empirically validated time complexity (O(log n), O(n), O(n log n), O(n²)) by benchmarking real runtimes with time.perf_counter, plotting results against scaled reference curves on log-log axes, and interpreting where empirical results matched or diverged from theory.
+- Performance benchmarking methodology: Experiments using numpy.logspace for evenly-spaced sample sizes on a log scale, isolated the operation under test from setup/data-generation cost, and used repeated trials to avoid single-point bias.
+- Numerical computing & floating-point literacy: Investigated IEEE 754 floating-point precision limits (loss of precision in large-number addition, and instability in finite-difference derivative approximations as step size shrinks).
+- Testing & validation practices: Wrote and documented explicit test cases (including edge cases like negative numbers, floats, and empty strings) to verify correctness of custom data structures and functions before relying on them.
+- Technical writing & communication: Documented methodology, hypotheses, and conclusions clearly enough for a third party to follow and verify.
 
 # Exercise 1
 ## Instructions

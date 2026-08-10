@@ -1,20 +1,12 @@
 # Skills Demonstrated:
-## Probabilistic data structures & hashing
-Implemented a Bloom filter from scratch (bitarray, SHA-256, BLAKE2b, SHA3-256) to reason about space/accuracy trade-offs, analogous to how Bloom filters are used in genomics for k-mer/variant lookups.
-## Algorithm design & analysis
-Adapted a divide-and-conquer merge sort to support key-based sorting of structured records (e.g., patient ID + associated data), and empirically benchmarked serial vs. parallel performance across dataset sizes.
-## Parallel / concurrent computing
-Used Python's multiprocessing (Pool) to distribute sorting workloads across CPU cores, measured real speedups, and reasoned about the overhead/break-even point where parallelism pays off.
-## REST API integration at scale
-Queried NCBI's Entrez E-utilities to programmatically retrieve and paginate PubMed records, respecting API rate limits and batching requests to minimize call volume.
-## XML parsing & robust data extraction
-Parsed nested, inconsistently structured XML using xml.etree.ElementTree, producing clean, reusable JSON metadata.
-## NLP / transformer embeddings
-Used a pretrained transformer (SPECTER) via HuggingFace transformers to embed scientific titles/abstracts into dense 768-dimensional vector representations.
-## Dimensionality reduction & unsupervised analysis
-Applied PCA to project high-dimensional embeddings into interpretable 2D space and evaluated cluster separability between research domains.
-## Data visualization
-Produced multi-panel comparative plots (matplotlib, seaborn) to communicate quantitative trade-offs (filter size vs. accuracy, serial vs. parallel runtime) and qualitative structure (embedding clusters).
+- Probabilistic data structures & hashing: Implemented a Bloom filter from scratch (bitarray, SHA-256, BLAKE2b, SHA3-256) to reason about space/accuracy trade-offs, analogous to how Bloom filters are used in genomics for k-mer/variant lookups.
+- Algorithm design & analysis: Adapted a divide-and-conquer merge sort to support key-based sorting of structured records (e.g., patient ID + associated data), and empirically benchmarked serial vs. parallel performance across dataset sizes.
+- Parallel / concurrent computing: Used Python's multiprocessing (Pool) to distribute sorting workloads across CPU cores, measured real speedups, and reasoned about the overhead/break-even point where parallelism pays off.
+- REST API integration at scale: Queried NCBI's Entrez E-utilities to programmatically retrieve and paginate PubMed records, respecting API rate limits and batching requests to minimize call volume.
+- XML parsing & robust data extraction: Parsed nested, inconsistently structured XML using xml.etree.ElementTree, producing clean, reusable JSON metadata.
+- NLP / transformer embeddings: Used a pretrained transformer (SPECTER) via HuggingFace transformers to embed scientific titles/abstracts into dense 768-dimensional vector representations.
+- Dimensionality reduction & unsupervised analysis: Applied PCA to project high-dimensional embeddings into interpretable 2D space and evaluated cluster separability between research domains.
+- Data visualization: Produced multi-panel comparative plots (matplotlib, seaborn) to communicate quantitative trade-offs (filter size vs. accuracy, serial vs. parallel runtime) and qualitative structure (embedding clusters).
 
 # Exercise 1
 ## Instructions
